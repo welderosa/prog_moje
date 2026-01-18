@@ -26,12 +26,16 @@ jobs:
         run: |
           cat <<EOF > config.json
           {
-            "source": "skylink.sk",
             "output": "guide.xml",
-            "channels": [
-              "Jednotka", "Dvojka", "Markiza", "Doma", "Dajto", 
-              "JOJ", "Plus", "Wau", "Nova", "Prima", 
-              "HBO", "HBO2", "HBO3"
+            "sources": [
+              {
+                "id": "skylink.sk",
+                "channels": [
+                  "Jednotka", "Dvojka", "Markiza", "Doma", "Dajto", 
+                  "JOJ", "Plus", "Wau", "Nova", "Prima", 
+                  "HBO", "HBO2", "HBO3"
+                ]
+              }
             ]
           }
           EOF
