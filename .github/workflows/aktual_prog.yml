@@ -26,7 +26,7 @@ jobs:
       - name: Generovanie EPG
         run: |
           # Sem pridajte ID všetkých staníc, ktoré máte v playliste (oddelené čiarkou bez medzier)
-          epg-grabber --site skylink.sk --channels Jednotka,Dvojka,Markiza,Markiza_KRIMI,Markiza_KLASIK,Doma,Dajto,JOJ,JOJ_Plus,JOJ_Family,JOJ_Svet,JOJ_Cinema,JOJ_Sport,TA3,CT1,CT2,CT_Sport,RTVS_Sport,Prima,Prima_Cool,Prima_Max,Prima_Zoom,Nova,Nova_Cinema,Sport_1,Sport_2,AXN,AMC,HBO,HBO2,HBO3,Cinemax,Cinemax_2,Film_Europe_Plus,Spektrum,National_Geographic,National_Geographic_Wild,Animal_Planet,Love_Nature,Auto_Motor_Sport,Ocko,Retro_Music --output guide.xml
+          epg-grabber --site skylink.sk --channels Jednotka,Dvojka,Markiza,Doma,Dajto,JOJ,Plus,Wau,Nova,Prima,Sport_1,Sport_2,HBO,HBO2,HBO3,Cinemax,Cinemax_2,AXN,AMC,Spektrum,Ocko --output guide.xml
 
       - name: Odoslanie do GitHubu
         run: |
