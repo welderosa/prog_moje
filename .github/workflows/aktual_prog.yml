@@ -1,0 +1,33 @@
+name: aktual_prog
+on:
+  schedule:
+    - cron: '0 3 * * *' # Spustí sa každú noc o 03:00
+  workflow_dispatch: # Umožní spustiť aj manuálne tlačidlom
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install Grabber
+        run: pip install epg-grabber-slovakia # Príklad grabberu
+
+      - name: Run Grabber
+        run: epg-grabber --output tajny_subor_epg_789.xml
+
+      - name: Commit and Push
+        run: |
+          git config --global user.name "EPG Bot"
+          git config --global user.email "bot@epg.com"
+          git add tajny_subor_epg_789.xml
+          git commit -m "Automatická aktualizácia EPG"
+          git push# This is a basic workflow to help you get started with Actions
+
+
