@@ -22,31 +22,24 @@ jobs:
       - name: Inštalácia grabberu
         run: pip install epg-grabber
 
-      - name: Vytvorenie konfigurácie
+      - name: Vytvorenie JSON konfigurácie
         run: |
-          # Tento krok vytvorí konfiguračný súbor pre grabber
-          cat <<EOF > config.yaml
-          source: skylink.sk
-          channels:
-            - Jednotka
-            - Dvojka
-            - Markiza
-            - Doma
-            - Dajto
-            - JOJ
-            - Plus
-            - Wau
-            - Nova
-            - Prima
-            - HBO
-            - HBO2
-            - HBO3
+          # Vytvoríme čistý JSON súbor s kanálmi
+          cat <<EOF > config.json
+          {
+            "source": "skylink.sk",
+            "channels": [
+              "Jednotka", "Dvojka", "Markiza", "Doma", "Dajto", 
+              "JOJ", "Plus", "Wau", "Nova", "Prima", 
+              "HBO", "HBO2", "HBO3", "Sport_1", "Sport_2"
+            ]
+          }
           EOF
 
       - name: Generovanie EPG
         run: |
-          # Spustíme grabber s vytvorenou konfiguráciou
-          epg-grabber --config config.yaml --output guide.xml
+          # Spustíme grabber a povieme mu, že používame JSON config
+          epg-grabber --config config.json --output guide.xml
 
       - name: Odoslanie do GitHubu
         run: |
