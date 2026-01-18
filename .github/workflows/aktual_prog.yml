@@ -1,17 +1,20 @@
 name: Denná aktualizácia EPG
+
 on:
   schedule:
-    - cron: '0 3 * * *' # Spustí sa každú noc o 03:00 UTC
-  workflow_dispatch: # Pridá tlačidlo na manuálne spustenie
+    - cron: '0 3 * * *' # Každý deň o 03:00 UTC
+  workflow_dispatch:     # Tlačidlo na manuálne spustenie
 
 jobs:
   grab-epg:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write    # Povolenie pre zápis do repozitára
     steps:
-      - name: Kontrola repozitára
+      - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Inštalácia Pythonu
+      - name: Nastavenie Pythonu
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
@@ -22,9 +25,8 @@ jobs:
 
       - name: Generovanie EPG
         run: |
-          # Tu si definujete kanály (id staníc zo skylinku/antik/atď)
-          # Príklad pre pár základných staníc:
-          epg-grabber --site skylink.sk --channels Jednotka,Dvojka,Markiza,Doma,Dajto,JOJ,Plus,Wau --output guide.xml
+          # Sem pridajte ID všetkých staníc, ktoré máte v playliste (oddelené čiarkou bez medzier)
+          epg-grabber --site skylink.sk --channels Jednotka,Dvojka,Markiza,Doma,Dajto,JOJ,Plus,Wau,JOJ_Cinema,JOJ_Family,Nova,Nova_Cinema,Prima,Prima_Cool,Prima_Max,Prima_Zoom --output guide.xml
 
       - name: Odoslanie do GitHubu
         run: |
