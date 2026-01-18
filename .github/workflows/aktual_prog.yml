@@ -2,14 +2,14 @@ name: Denná aktualizácia EPG
 
 on:
   schedule:
-    - cron: '0 3 * * *' # Každý deň o 03:00 UTC
-  workflow_dispatch:     # Tlačidlo na manuálne spustenie
+    - cron: '0 3 * * *'
+  workflow_dispatch:
 
 jobs:
   grab-epg:
     runs-on: ubuntu-latest
     permissions:
-      contents: write    # Povolenie pre zápis do repozitára
+      contents: write
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -20,13 +20,33 @@ jobs:
           python-version: '3.10'
 
       - name: Inštalácia grabberu
+        run: pip install epg-grabber
+
+      - name: Vytvorenie konfigurácie
         run: |
-          pip install epg-grabber
+          # Tento krok vytvorí konfiguračný súbor pre grabber
+          cat <<EOF > config.yaml
+          source: skylink.sk
+          channels:
+            - Jednotka
+            - Dvojka
+            - Markiza
+            - Doma
+            - Dajto
+            - JOJ
+            - Plus
+            - Wau
+            - Nova
+            - Prima
+            - HBO
+            - HBO2
+            - HBO3
+          EOF
 
       - name: Generovanie EPG
         run: |
-          # Sem pridajte ID všetkých staníc, ktoré máte v playliste (oddelené čiarkou bez medzier)
-          epg-grabber --site skylink.sk --channels Jednotka,Dvojka,Markiza,Doma,Dajto,JOJ,Plus,Wau,Nova,Prima,Sport_1,Sport_2,HBO,HBO2,HBO3,Cinemax,Cinemax_2,AXN,AMC,Spektrum,Ocko --output guide.xml
+          # Spustíme grabber s vytvorenou konfiguráciou
+          epg-grabber --config config.yaml --output guide.xml
 
       - name: Odoslanie do GitHubu
         run: |
