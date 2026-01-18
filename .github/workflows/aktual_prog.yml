@@ -1,4 +1,28 @@
-- name: Vytvorenie JSON konfigurácie
+name: Denná aktualizácia EPG
+
+on:
+  schedule:
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+
+jobs:
+  grab-epg:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Nastavenie Pythonu
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Inštalácia grabberu
+        run: pip install epg-grabber
+
+      - name: Vytvorenie JSON konfigurácie
         run: |
           cat <<EOF > config.json
           {
@@ -14,5 +38,12 @@
 
       - name: Generovanie EPG
         run: |
-          # Spustíme bez parametra --output, pretože je už v config.json
           epg-grabber --config config.json
+
+      - name: Odoslanie do GitHubu
+        run: |
+          git config --global user.name "EPG-Bot"
+          git config --global user.email "actions@github.com"
+          git add guide.xml
+          git commit -m "Aktualizácia EPG: $(date)" || exit 0
+          git push
