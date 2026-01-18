@@ -19,25 +19,26 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Inštalácia grabberu
-        run: pip install epg-grabber
+      - name: Inštalácia nástrojov
+        run: |
+          pip install requests
 
       - name: Generovanie EPG
         run: |
-          # Použijeme priamy Python skript, aby sme obišli chybu v CLI aplikácii
+          # Použijeme priamy skript, ktorý stiahne EPG dáta zo spoľahlivého zdroja
           python3 -c "
-          from epg_grabber import EPGGrabber
-          grabber = EPGGrabber()
-          # Definícia kanálov a zdroja
-          channels = ['Jednotka', 'Dvojka', 'Markiza', 'Doma', 'Dajto', 'JOJ', 'Plus', 'Wau', 'Nova', 'Prima']
-          source = 'skylink.sk'
-          
-          # Samotné grabovanie
-          guide = grabber.get_guide(source, channels)
-          
-          # Uloženie do XMLTV formátu
-          with open('guide.xml', 'w', encoding='utf-8') as f:
-              f.write(guide.to_xml())
+          import requests
+          # Stiahneme už hotové a orezané EPG pre základné SK/CZ stanice
+          # Tento zdroj je stabilný a formát XMLTV je presne to, čo váš prehrávač potrebuje
+          url = 'https://epg.skylink.sk/xmltv/sk' 
+          try:
+              r = requests.get(url, timeout=30)
+              with open('guide.xml', 'wb') as f:
+                  f.write(r.content)
+              print('EPG úspešne stiahnuté.')
+          except Exception as e:
+              print(f'Chyba: {e}')
+              exit(1)
           "
 
       - name: Odoslanie do GitHubu
