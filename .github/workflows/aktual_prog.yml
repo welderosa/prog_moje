@@ -29,7 +29,7 @@ jobs:
             "output": "guide.xml",
             "sources": [
               {
-                "id": "skylink.sk",
+                "source": "skylink.sk",
                 "channels": [
                   "Jednotka", "Dvojka", "Markiza", "Doma", "Dajto", 
                   "JOJ", "Plus", "Wau", "Nova", "Prima", 
