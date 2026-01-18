@@ -1,33 +1,35 @@
-name: aktual_prog
+name: Denná aktualizácia EPG
 on:
   schedule:
-    - cron: '0 3 * * *' # Spustí sa každú noc o 03:00
-  workflow_dispatch: # Umožní spustiť aj manuálne tlačidlom
+    - cron: '0 3 * * *' # Spustí sa každú noc o 03:00 UTC
+  workflow_dispatch: # Pridá tlačidlo na manuálne spustenie
 
 jobs:
-  build:
+  grab-epg:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
+      - name: Kontrola repozitára
+        uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - name: Inštalácia Pythonu
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.9'
+          python-version: '3.10'
 
-      - name: Install Grabber
-        run: pip install epg-grabber-slovakia # Príklad grabberu
-
-      - name: Run Grabber
-        run: epg-grabber --output tajny_subor_epg_789.xml
-
-      - name: Commit and Push
+      - name: Inštalácia grabberu
         run: |
-          git config --global user.name "EPG Bot"
-          git config --global user.email "bot@epg.com"
-          git add tajny_subor_epg_789.xml
-          git commit -m "Automatická aktualizácia EPG"
-          git push# This is a basic workflow to help you get started with Actions
+          pip install epg-grabber
 
+      - name: Generovanie EPG
+        run: |
+          # Tu si definujete kanály (id staníc zo skylinku/antik/atď)
+          # Príklad pre pár základných staníc:
+          epg-grabber --site skylink.sk --channels Jednotka,Dvojka,Markiza,Doma,Dajto,JOJ,Plus,Wau --output guide.xml
 
+      - name: Odoslanie do GitHubu
+        run: |
+          git config --global user.name "EPG-Bot"
+          git config --global user.email "actions@github.com"
+          git add guide.xml
+          git commit -m "Aktualizácia EPG: $(date)" || exit 0
+          git push
