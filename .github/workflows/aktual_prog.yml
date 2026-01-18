@@ -22,27 +22,23 @@ jobs:
       - name: Inštalácia grabberu
         run: pip install epg-grabber
 
-      - name: Vytvorenie JSON konfigurácie
-        run: |
-          cat <<EOF > config.json
-          {
-            "output": "guide.xml",
-            "sources": [
-              {
-                "source": "skylink.sk",
-                "channels": [
-                  "Jednotka", "Dvojka", "Markiza", "Doma", "Dajto", 
-                  "JOJ", "Plus", "Wau", "Nova", "Prima", 
-                  "HBO", "HBO2", "HBO3"
-                ]
-              }
-            ]
-          }
-          EOF
-
       - name: Generovanie EPG
         run: |
-          epg-grabber --config config.json
+          # Použijeme priamy Python skript, aby sme obišli chybu v CLI aplikácii
+          python3 -c "
+          from epg_grabber import EPGGrabber
+          grabber = EPGGrabber()
+          # Definícia kanálov a zdroja
+          channels = ['Jednotka', 'Dvojka', 'Markiza', 'Doma', 'Dajto', 'JOJ', 'Plus', 'Wau', 'Nova', 'Prima']
+          source = 'skylink.sk'
+          
+          # Samotné grabovanie
+          guide = grabber.get_guide(source, channels)
+          
+          # Uloženie do XMLTV formátu
+          with open('guide.xml', 'w', encoding='utf-8') as f:
+              f.write(guide.to_xml())
+          "
 
       - name: Odoslanie do GitHubu
         run: |
